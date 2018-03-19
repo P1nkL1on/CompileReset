@@ -26,6 +26,8 @@ namespace CompileNew
 
         public static int CheckBracket(char symbol)
         {
+            //if (OPERATORS.bracketStack.Count > 0 && OPERATORS.bracketStack.First() == '\"' && symbol != '\"')
+            //    return OPERATORS.bracketStack.Count - 1;
             int brTypeO = OPERATORS.bracketOpen.IndexOf(symbol),
                 brTypeC = OPERATORS.bracketClose.IndexOf(symbol);
             if (brTypeO >= 0 || brTypeC >= 0)
@@ -55,7 +57,7 @@ namespace CompileNew
             while (nowIn < S.Length)
             {
                 int empty = PARSE.CheckBracket(S[nowIn]);
-                if (empty == 0)
+                if (empty == 0 || (empty == 1 && OPERATORS.bracketStack.First() == '\"'))
                 {
                     if (currentInnerParse.Length > 0)   // put a inner bracket to a list for far going parsing
                     {
@@ -63,7 +65,7 @@ namespace CompileNew
                         currentInnerParse = "";
                     }
                     // add to a main zero level parsing
-                    char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@');
+                    char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0 || OPERATORS.bracketClose.IndexOf(S[nowIn]) >= 3) ? S[nowIn] : '@');
                     if (addC != ' ')
                         noBracketsParse += addC;
                 }
@@ -82,7 +84,7 @@ namespace CompileNew
             innerParse = inBracketsPrase;
 
             while
-            (noBracketsParse == "@")
+            (noBracketsParse == "@" && innerParse[0][0] != '[' && innerParse[0][0] != '{')
             {
                 string innerP = innerParse[0]; innerParse = new List<string>();
                 noBracketsParse = ParseLevels(innerP, out innerParse);

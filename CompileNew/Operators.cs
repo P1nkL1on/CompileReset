@@ -8,7 +8,7 @@ namespace CompileNew
 {
     public static class OPERATORS
     {
-        public static List<string> names = new List<string>() { "+", "-", "*", "/", "operation", "ops" };
+        public static List<string> names = new List<string>() { "=", "||", "|", "or", "&&", "&", "and", "==", "!=", ">", "<", ">=", "<=", "<<", ">>", "+", "-", "^", "*", "/", "%" };
         public static List<char> bracketOpen = new List<char>() { '(', '{', '[', '\'', '\"' };
         public static List<char> bracketClose = new List<char>() { ')', '}', ']', '\'', '\"' };
 

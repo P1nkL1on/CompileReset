@@ -10,9 +10,12 @@ namespace CompileNew
     {
         static void Main(string[] args)
         {
+            
             //Value v1 = new Value((object)4, new TypeFull(1, 0)),
             //      v2 = new Value((object)5, new TypeFull(1,0));
-            operation bo = binaryOperation.Parse("2 + (1)/ 4");//("1   *   6 + 13 - 20/2 +(2  + 3) *(   4 + 5)/ (12  + 11)-(6*(16-13)*(2-12/10)*3*(   2*(3*(1+(   0    )))))"); //(OPERATORS.indexOfName("+"), v1, v2);
+            //{ "=" , "==", "!=", ">", "<", ">=", "<=", "||", "|", "or","&&", "&", "and",  "^", "<<", ">>", "+", "-", "*", "/", "%"};
+            operation bo = binaryOperation.Parse("2+3");
+                //("1   *   6 + 13f - 20/2 +(.00003  + 3) *(   \"abcd\" + 6.77777 + 5)/ (\'1\'  + 11)-(6*(16-13)*(2-12/10)*3*(   2*(3*(1+(   0    )))))"); //(OPERATORS.indexOfName("+"), v1, v2);
             //
             bo.Trace(1);
             Console.ReadLine();

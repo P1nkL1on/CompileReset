@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CompileNew
 {
     public static class TYPES{
-        static List<string> names = new List<string>() { "void", "int", "float", "double", "char", "bool" };
+        static List<string> names = new List<string>() { "void", "int", "char", "float", "double", "bool" };
         public static string nameOfIndex (int typeIndex) { return names[typeIndex]; }
     }
 
@@ -46,10 +46,55 @@ namespace CompileNew
         }
         public Value(string S)
         {
-            // int only
-            this.date = (object)int.Parse(S);
-            this.type = new TypeFull(1);    // int
-            Console.WriteLine("Created value token " + this.ToString());
+            try
+            {
+                if (S.IndexOf('\'') == 0 && S.LastIndexOf('\'') == S.Length - 1)
+                {
+                    string inBrackets = S.Substring(1, S.Length - 2);
+                    
+                    if (inBrackets.Length == 1)
+                        this.date = (object)((int)(inBrackets[0]));
+                    else
+                        this.date = (object)(inBrackets);
+                    this.type = new TypeFull(2);    // char
+                    Console.WriteLine("Created value token " + this.ToString());
+                    return;
+                }
+                if (S.IndexOf('\"') == 0 && S.LastIndexOf('\"') == S.Length - 1)
+                {
+                    string inBrackets = S.Substring(1, S.Length - 2);
+                    this.date = (object)(inBrackets);
+                    this.type = new TypeFull(2, 1);    // char
+                    Console.WriteLine("Created value token " + this.ToString());
+                    return;
+                }
+
+                // number section
+                if (S.IndexOf('f') == S.Length - 1)
+                {
+                    this.date = (object)float.Parse(S.Substring(0, S.Length - 1));
+                    this.type = new TypeFull(3);    // float
+                    Console.WriteLine("Created value token " + this.ToString());
+                    return;
+                }
+
+                if (S.IndexOf('.') >= 0)
+                {
+                    this.date = (object)(double.Parse(S.Replace('.', ',')));
+                    this.type = new TypeFull(4);    // float
+                    Console.WriteLine("Created value token " + this.ToString());
+                    return;
+                }
+
+                this.date = (object)int.Parse(S);
+                this.type = new TypeFull(1);    // int
+                Console.WriteLine("Created value token " + this.ToString());
+                return;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Can not resolve value \"" + S +"\"");
+            }
         }
         public override void Trace(int depth)
         {
