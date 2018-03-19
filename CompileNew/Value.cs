@@ -44,6 +44,13 @@ namespace CompileNew
             this.date = date;
             this.type = type;
         }
+        public Value(string S)
+        {
+            // int only
+            this.date = (object)int.Parse(S);
+            this.type = new TypeFull(1);    // int
+            Console.WriteLine("Created value token " + this.ToString());
+        }
         public override void Trace(int depth)
         {
             COMMON.TraceOnDep(this.ToString(), depth, ConsoleColor.Yellow);

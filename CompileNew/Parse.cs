@@ -59,22 +59,34 @@ namespace CompileNew
                 {
                     if (currentInnerParse.Length > 0)   // put a inner bracket to a list for far going parsing
                     {
-                        inBracketsPrase.Add(currentInnerParse);
+                        inBracketsPrase.Add(currentInnerParse + S[nowIn]);
                         currentInnerParse = "";
                     }
                     // add to a main zero level parsing
-                    noBracketsParse += ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@');
+                    char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@');
+                    if (addC != ' ')
+                        noBracketsParse += addC;
                 }
                 else
                     // adding to current non zero level
-                    currentInnerParse += ((OPERATORS.bracketOpen.IndexOf(S[nowIn]) < 0) ? S[nowIn] + "" : "");
+                    currentInnerParse += S[nowIn];// ((OPERATORS.bracketOpen.IndexOf(S[nowIn]) < 0) ? S[nowIn] + "" : "");
                 nowIn++;
             }
-            Console.WriteLine(noBracketsParse);
+            Console.WriteLine(": " + noBracketsParse);
             for (int i = 0; i < inBracketsPrase.Count; i++)
-                Console.WriteLine("  @   " + inBracketsPrase[i]);
+            {
+                inBracketsPrase[i] = inBracketsPrase[i].Substring(1, inBracketsPrase[i].Length - 2);
+                Console.WriteLine("    \"" + inBracketsPrase[i]+"\"");
+            }
 
             innerParse = inBracketsPrase;
+
+            while
+            (noBracketsParse == "@")
+            {
+                string innerP = innerParse[0]; innerParse = new List<string>();
+                noBracketsParse = ParseLevels(innerP, out innerParse);
+            }
             return noBracketsParse;
         }
     }
