@@ -43,15 +43,16 @@ namespace CompileNew
                                 if (noConflicts)
                                     noConflicts = false;
                         }
-                }catch(Exception e) { }
+                }
+                catch (Exception e) { }
             } while (!noConflicts && foundIndex >= 0);
-            
+
             if (!noConflicts)
                 foundIndex = -1;
 
             if (foundIndex < 0)
                 return new string[1] { S };
-    
+
             return new string[] { S.Substring(0, foundIndex), S.Substring(foundIndex + op.Length, S.Length - foundIndex - op.Length) };
         }
 
@@ -115,7 +116,9 @@ namespace CompileNew
                     // add to a main zero level parsing
                     char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@');
                     //if (addC != ' ')
-                        noBracketsParse += addC;
+                    noBracketsParse += addC;
+                    if (addC == '*')
+                        noBracketsParse += ' ';
                 }
                 else
                 {
@@ -146,5 +149,11 @@ namespace CompileNew
             }
             return noBracketsParse;
         }
+
     }
+
+        //public static string ParseMonoOps(string S, out List<string> innerParse)
+        //{
+        //    // **++@ + 1233 - *@--
+        //}
 }

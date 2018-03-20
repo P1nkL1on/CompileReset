@@ -8,7 +8,9 @@ namespace CompileNew
 {
     public static class OPERATORS
     {
-        public static List<string> names = new List<string>() {"=",  "+", "-", "^", "*", "/", "%", "||", "|", "or", "&&", "&", "and", "==", "!=", ">", "<", ">=", "<=", "<<", ">>"};
+        public static List<string> names = new List<string>() {"=",  "+", "-", "^", "*", "/", "%", "||", "|", "or", "&&", "&", "and", "==", "!=", ">", "<", ">=", "<=", "<<", ">>",          "!", "++", "--" };
+        public static List<string> monoPreNames = new List<string>() { "-","!","*","&", "++", "--" };
+        public static List<string> monoPostNames = new List<string>() {"++", "--" };
         public static List<char> bracketOpen = new List<char>() { '(', '{', '[', '\'', '\"' };
         public static List<char> bracketClose = new List<char>() { ')', '}', ']', '\'', '\"' };
 
@@ -40,9 +42,6 @@ namespace CompileNew
                 for (int i = 0; i < names.Count; i++)
                     if (!anyMatch && names[i].IndexOf(currentOp + newC) == 0)
                     {
-                        //if (names[i].IndexOf(currentOp + newC) == 0)
-                            //(names[i] != newC + "")
-                            //if (currentOp != newC + "")
                         currentOp += newC;
                         anyMatch = true;
                     }
