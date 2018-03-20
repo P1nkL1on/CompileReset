@@ -11,3 +11,4 @@ D:\CompileReset\CompileNew\obj\Debug\CompileNew.pdb
 D:\CompileReset\CompileNew\bin\Debug\CompileNew.exe
 D:\CompileReset\CompileNew\bin\Debug\CompileNew.pdb
 D:\CompileReset\CompileNew\obj\Debug\CompileNew.csprojResolveAssemblyReference.cache
+D:\CompileReset\CompileNew\obj\Debug\CompileNew.csproj.CoreCompileInputs.cache

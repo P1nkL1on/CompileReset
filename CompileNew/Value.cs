@@ -32,6 +32,14 @@ namespace CompileNew
         {
             return TYPES.nameOfIndex(type) + "".PadLeft(pointerLevel, '*');
         }
+        public int getType()
+        {
+            return type;
+        }
+        public int getPointerLevel()
+        {
+            return pointerLevel;
+        }
     }
 
     class Value : operation
@@ -102,7 +110,10 @@ namespace CompileNew
         }
         public override string ToString()
         {
-            return type.ToString() + " " + date.ToString();
+
+            string dateString = date.ToString();
+            if (type.getType() == 2 && type.getPointerLevel() == 1) dateString = '\"' + dateString + '\"';//'
+            return type.ToString() + " " + dateString;
         }
         public virtual bool IsStatic()
         {

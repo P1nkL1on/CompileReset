@@ -26,6 +26,10 @@ namespace CompileNew
     {
         protected operation a;
         public override void Trace(int depth) { COMMON.TraceOnDep(opName, depth); a.Trace(depth + 1); }
+        public static operation Parse(string S)
+        {
+            return new Value(S);
+        }
     }
     public class binaryOperation : operation
     {
@@ -49,23 +53,33 @@ namespace CompileNew
         }
         public static operation Parse(string S)
         {
+            Console.WriteLine(S+"\n");
             List<string> inner;
             string zero = PARSE.ParseLevels(S, out inner);
 
+
+            
             int currentInnerIndex = 0;
             List<operation> innerOperations = new List<operation>(), allOperations = new List<operation>();
 
             for (int i = 0; i < inner.Count; i++)
+            {
+                if (inner.Count == 1 && S == inner[0] && S.Length >= 2 && S[0] == S[S.Length - 1] && OPERATORS.bracketOpen.IndexOf(S[0]) >= 3)
+                    return monoOperation.Parse(S);
                 innerOperations.Add(Parse(inner[i]));
+            }
 
             string Format = OPERATORS.MakeASync(zero, out inner);
-            if (!anyOperatorsInFormat(Format))
-                return new Value(zero);
 
-            List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.None).ToList();
+            COMMON.TraceOnDep(zero, 5, ConsoleColor.Cyan); COMMON.TraceOnDep(Format, 5, ConsoleColor.DarkCyan);
+
+            if (!anyOperatorsInFormat(Format))
+                return monoOperation.Parse(zero);
+
+            List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
             for (int i = 0; i < parts.Count; i++)
                 if (parts[i] != "@")
-                    allOperations.Add(new Value(parts[i]));
+                    allOperations.Add(monoOperation.Parse(parts[i]));
                 else
                     allOperations.Add(innerOperations[currentInnerIndex++]);
 
@@ -80,13 +94,19 @@ namespace CompileNew
             return false;
         }
 
+       
+
         binaryOperation(string S, List<operation> args)
         {
             for (int i = 0; i < OPERATORS.names.Count; i++)
             {
-                string[] splited = S.Split(new string[] { OPERATORS.names[i] }, 2, StringSplitOptions.None);
+                string[] splited = PARSE.SeparateFormatOnOperator(S, i);
+                //splited = S.Split(new string[] { OPERATORS.names[i]}, 2, StringSplitOptions.None);
+
                 if (splited.Length == 2)
                 {
+                    COMMON.TraceOnDep( OPERATORS.names[i] + "   : "+ splited[0]+ "   |   " + splited[1], 5, ConsoleColor.DarkYellow);
+
                     opName = OPERATORS.names[i];
                     type = i;
                     if (anyOperatorsInFormat(splited[0]))
