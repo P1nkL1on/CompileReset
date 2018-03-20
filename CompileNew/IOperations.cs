@@ -78,10 +78,14 @@ namespace CompileNew
 
             List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
             for (int i = 0; i < parts.Count; i++)
+            {
+                // trimming problems
+                parts[i] = parts[i].Trim(' ');
                 if (parts[i] != "@")
                     allOperations.Add(monoOperation.Parse(parts[i]));
                 else
                     allOperations.Add(innerOperations[currentInnerIndex++]);
+            }
 
             return new binaryOperation(Format, allOperations);
         }

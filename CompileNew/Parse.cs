@@ -114,10 +114,8 @@ namespace CompileNew
                     }
                     // add to a main zero level parsing
                     char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@');
-                    if (addC != ' ')
+                    //if (addC != ' ')
                         noBracketsParse += addC;
-                    //else
-                    //    noBracketsParse += OPERATORS.bracketStack.Count;
                 }
                 else
                 {
