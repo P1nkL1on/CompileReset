@@ -195,7 +195,6 @@ namespace CompileNew
                 {
                     string oper = currentMayBeOperator.Substring(0, currentMayBeOperator.Length - 1);//OPERATORS.monoPreNames[wasPrev];
                     int operatorIndex = OPERATORS.monoPostNames.IndexOf(oper);
-                    // to prevent + in case of ++ real
                     if (operatorIndex >= 0 && prevLastValuePuted != "")
                     {
                         monoInner.Add(prevLastValuePuted + oper);
@@ -217,7 +216,11 @@ namespace CompileNew
                         if (OPERATORS.nonConfirmedSymbols.IndexOf(S[nowIn]) >= 0 && nextOprIsPrev == 2)
                             nextOprIsPrev = 0;
                         else
-                        { monoInner[monoInner.Count - 1] += S[nowIn]; if (S[nowIn] != ' ') nextOprIsPrev = 2; }
+                        {
+                            monoInner[monoInner.Count - 1] += S[nowIn];
+                            if (S[nowIn] != ' ')
+                                nextOprIsPrev = 2;
+                        }
                     }
                 }
                 else
@@ -234,7 +237,20 @@ namespace CompileNew
 
                 nowIn++;
             }
-            return res;
+            if (currentPostOperatorIndex >= 0)
+            {
+                string oper = currentMayBeOperator.Substring(0, currentMayBeOperator.Length);//OPERATORS.monoPreNames[wasPrev];
+                int operatorIndex = OPERATORS.monoPostNames.IndexOf(oper); 
+                    if (operatorIndex >= 0 && prevLastValuePuted != "")
+                {
+                    monoInner.Add(prevLastValuePuted + oper);
+                    res = res.TrimEnd(' ');
+                    res = res.Substring(0, res.Length - oper.Length).TrimEnd(' ');
+                    // res = res
+                    res = res.Substring(0, res.Length - prevLastValuePuted.Length).TrimEnd(' ') + "#";
+                }
+            }
+            return res + lastValuePuted;
         }
 
     }
