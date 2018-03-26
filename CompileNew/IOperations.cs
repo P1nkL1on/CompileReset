@@ -103,46 +103,58 @@ namespace CompileNew
             if (S == "")
                 return monoOperation.Parse(S);
             Console.WriteLine(S + "\n");
-            List<string> inner;
+            List<string> inner, innerMono;
+            
             string zero = PARSE.ParseLevels(S, out inner);
-
-            int currentInnerIndex = 0;
-            List<operation> innerOperations = new List<operation>(), allOperations = new List<operation>();
-
+            COMMON.TraceOnDep(zero, 1, ConsoleColor.Yellow);
+            zero = PARSE.ParseMono(zero, out innerMono, inner);
+            COMMON.TraceOnDep(zero, 1, ConsoleColor.Red);
+            Console.WriteLine("Mono:");
+            for (int i = 0; i < innerMono.Count; i++)
+                COMMON.TraceOnDep("# " + innerMono[i], 3, ConsoleColor.Red);
+            Console.WriteLine("Inner:");
             for (int i = 0; i < inner.Count; i++)
-            {
-                if (inner.Count == 1 && S == inner[0] && S.Length >= 2 && S[0] == S[S.Length - 1] && OPERATORS.bracketOpen.IndexOf(S[0]) >= 3)
-                    return monoOperation.Parse(S);
-                innerOperations.Add(Parse(inner[i]));
-            }
+                COMMON.TraceOnDep("@ " + inner[i], 3, ConsoleColor.Red);
 
-            string Format = OPERATORS.MakeASync(zero, out inner);
+            //int X = 10;
+            //int currentInnerIndex = 0;
+            //List<operation> innerOperations = new List<operation>(), allOperations = new List<operation>();
 
-            COMMON.TraceOnDep(zero, 5, ConsoleColor.Cyan); COMMON.TraceOnDep(Format, 5, ConsoleColor.DarkCyan);
+            //for (int i = 0; i < inner.Count; i++)
+            //{
+            //    if (inner.Count == 1 && S == inner[0] && S.Length >= 2 && S[0] == S[S.Length - 1] && OPERATORS.bracketOpen.IndexOf(S[0]) >= 3)
+            //        return monoOperation.Parse(S);
+            //    innerOperations.Add(Parse(inner[i]));
+            //}
 
-            if (!anyOperatorsInFormat(Format))
-                return monoOperation.Parse(zero);
+            //string Format = OPERATORS.MakeASync(zero, out inner);
 
-            List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
-            for (int i = 0; i < parts.Count; i++)
-            {
-                // trimming problems
-                parts[i] = parts[i].Trim(' ');
-                if (parts[i] != "@")
-                    allOperations.Add(monoOperation.Parse(parts[i]));
-                else
-                    allOperations.Add(innerOperations[currentInnerIndex++]);
-            }
+            //COMMON.TraceOnDep(zero, 5, ConsoleColor.Cyan); COMMON.TraceOnDep(Format, 5, ConsoleColor.DarkCyan);
 
-            binaryOperation resOp = new binaryOperation(Format, allOperations);
+            //if (!anyOperatorsInFormat(Format))
+            //    return monoOperation.Parse(zero);
 
-            // case of monooperation checking of NONE
-            if ((resOp.a as monoOperation) != null && (resOp.a as monoOperation).isEmpty)
-                return new monoOperation(true, resOp.b, resOp.opName);
-            if ((resOp.b as monoOperation) != null && (resOp.b as monoOperation).isEmpty)
-                return new monoOperation(true, resOp.a, resOp.opName);
-            //
-            return resOp;
+            //List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+            //for (int i = 0; i < parts.Count; i++)
+            //{
+            //    // trimming problems
+            //    parts[i] = parts[i].Trim(' ');
+            //    if (parts[i] != "@")
+            //        allOperations.Add(monoOperation.Parse(parts[i]));
+            //    else
+            //        allOperations.Add(innerOperations[currentInnerIndex++]);
+            //}
+
+            //binaryOperation resOp = new binaryOperation(Format, allOperations);
+
+            //// case of monooperation checking of NONE
+            //if ((resOp.a as monoOperation) != null && (resOp.a as monoOperation).isEmpty)
+            //    return new monoOperation(true, resOp.b, resOp.opName);
+            //if ((resOp.b as monoOperation) != null && (resOp.b as monoOperation).isEmpty)
+            //    return new monoOperation(true, resOp.a, resOp.opName);
+            ////
+            //return resOp;
+            return null;
         }
 
         static bool anyOperatorsInFormat(string S)

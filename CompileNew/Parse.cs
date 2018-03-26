@@ -150,6 +150,93 @@ namespace CompileNew
             return noBracketsParse;
         }
 
+        public static string ParseMono(string S, out List<string> monoInner, List<string> innerDogs)
+        {
+
+            //" * @ + &@ - !8 + 7++"
+
+            int nowIn = 0, currentPrevOperatorIndex = -1, currentPostOperatorIndex = -1, wasPrev = -1, wasPost = -1;
+            string lastValuePuted = "", currentMayBeOperator = "", res = "", prevLastValuePuted = "";
+            int nextOprIsPrev = 0;
+            monoInner = new List<string>();
+
+
+            while (nowIn < S.Length)
+            {
+                currentMayBeOperator += S[nowIn];
+
+                currentPrevOperatorIndex = currentPostOperatorIndex = -1;
+                for (int i = 0; i < OPERATORS.monoPreNames.Count; i++)
+                    if (OPERATORS.monoPreNames[i].IndexOf(currentMayBeOperator) == 0)
+                        currentPrevOperatorIndex = i;
+                for (int i = 0; i < OPERATORS.monoPostNames.Count; i++)
+                    if (OPERATORS.monoPostNames[i].IndexOf(currentMayBeOperator) == 0)
+                        currentPostOperatorIndex = i;
+
+                if (currentPrevOperatorIndex == -1 && wasPrev >= 0)
+                {
+                    string oper = currentMayBeOperator.Substring(0, currentMayBeOperator.Length - 1);//OPERATORS.monoPreNames[wasPrev];
+                    int operatorIndex = OPERATORS.monoPreNames.IndexOf(oper);
+                    // to prevent + in case of ++ real
+                    if (operatorIndex >= 0 && prevLastValuePuted == "")
+                    {
+                        nextOprIsPrev = 1;
+                        monoInner.Add(oper);
+                        res += "#";
+                    }
+                    else
+                    {
+                        res += currentMayBeOperator;
+                    }
+                }
+                wasPrev = currentPrevOperatorIndex;
+
+                if (currentPostOperatorIndex == -1 && wasPost >= 0)
+                {
+                    string oper = currentMayBeOperator.Substring(0, currentMayBeOperator.Length - 1);//OPERATORS.monoPreNames[wasPrev];
+                    int operatorIndex = OPERATORS.monoPostNames.IndexOf(oper);
+                    // to prevent + in case of ++ real
+                    if (operatorIndex >= 0 && prevLastValuePuted != "")
+                    {
+                        monoInner.Add(prevLastValuePuted + oper);
+                        res = res.TrimEnd(' ');
+                        res = res.Substring(0, res.Length - oper.Length).TrimEnd(' ');
+                        //res = res
+                        res = res.Substring(0, res.Length - prevLastValuePuted.Length).TrimEnd(' ') + "#";
+                    }
+                }
+                wasPost = currentPostOperatorIndex;
+
+                if (currentPostOperatorIndex < 0 && currentPrevOperatorIndex < 0)
+                {
+                    currentMayBeOperator = "";
+                    if (nextOprIsPrev == 0)
+                        lastValuePuted += S[nowIn];
+                    else
+                    {
+                        if (OPERATORS.nonConfirmedSymbols.IndexOf(S[nowIn]) >= 0 && nextOprIsPrev == 2)
+                            nextOprIsPrev = 0;
+                        else
+                        { monoInner[monoInner.Count - 1] += S[nowIn]; if (S[nowIn] != ' ') nextOprIsPrev = 2; }
+                    }
+                }
+                else
+                {
+                    if (lastValuePuted.Length > 0)
+                    {
+                        prevLastValuePuted = "";
+                        int niv = 0;
+                        while (niv < lastValuePuted.Length) { if (lastValuePuted[niv] != ' ') prevLastValuePuted += lastValuePuted[niv]; niv++; }
+                    }
+                    res += lastValuePuted;
+                    lastValuePuted = "";
+                }
+
+                nowIn++;
+            }
+            return res;
+        }
+
     }
 
         //public static string ParseMonoOps(string S, out List<string> innerParse)

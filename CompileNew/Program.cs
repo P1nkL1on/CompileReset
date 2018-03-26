@@ -16,14 +16,14 @@ namespace CompileNew
             //{ "=" , "==", "!=", ">", "<", ">=", "<=", "||", "|", "or","&&", "&", "and",  "^", "<<", ">>", "+", "-", "*", "/", "%"};
             //try
             //{
-                operation bo = binaryOperation.Parse(" 5 + 6 * (12 - 3) / 7 + 77 * (2 + (4/(1+2) + 5)) ");//(" 2 +  \"     a     d   3 4   \"  +  \"   ___ ...____ ..\" -\'a\'  *   \'b\' + 10 -(2 -    11+2+3+4)");
-            bo.Trace(1);
+            operation bo = binaryOperation.Parse("*15 + &(10 - 55) * (1+\"hui\") - 'a' + 15 + 200 ++ ");//(" *(2 + 7)+ 10 & 1237680 + &(3) + 6*6 - !823187 + 7++  ");//(" 2 +  \"     a     d   3 4   \"  +  \"   ___ ...____ ..\" -\'a\'  *   \'b\' + 10 -(2 -    11+2+3+4)");
+            //bo.Trace(1);
             //}
             //catch (Exception e)
             //{
             //    COMMON.TraceOnDep(e.Message, 0, ConsoleColor.Red);
             //}
-    Console.ReadLine();
+            Console.ReadLine();
         }
     }
 }

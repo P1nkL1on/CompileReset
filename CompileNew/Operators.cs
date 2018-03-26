@@ -8,12 +8,12 @@ namespace CompileNew
 {
     public static class OPERATORS
     {
-        public static List<string> names = new List<string>() {"=",  "+", "-", "^", "*", "/", "%", "||", "|", "or", "&&", "&", "and", "==", "!=", ">", "<", ">=", "<=", "<<", ">>",          "!", "++", "--" };
-        public static List<string> monoPreNames = new List<string>() { "-","!","*","&", "++", "--" };
+        public static List<string> names = new List<string>() {"=",  "+", "-", "^", "*", "/", "%", "||", "|", "or", "&&", "&", "and", "==", "!=", ">", "<", ">=", "<=", "<<", ">>" };
+        public static List<string> monoPreNames = new List<string>() { "!","*","&", "++", "--" };
         public static List<string> monoPostNames = new List<string>() {"++", "--" };
         public static List<char> bracketOpen = new List<char>() { '(', '{', '[', '\'', '\"' };
         public static List<char> bracketClose = new List<char>() { ')', '}', ']', '\'', '\"' };
-
+        public static string nonConfirmedSymbols = "+-*/%^|&!@ ";
 
         public static Stack<char> bracketStack = new Stack<char>();
 
