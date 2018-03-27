@@ -131,12 +131,12 @@ namespace CompileNew
                 }
                 nowIn++;
             }
-            Console.WriteLine(": " + noBracketsParse);
+            //Console.WriteLine(": " + noBracketsParse);
             for (int i = 0; i < inBracketsPrase.Count; i++)
             {
                 if (OPERATORS.bracketOpen.IndexOf(inBracketsPrase[i][0]) < 3)
                     inBracketsPrase[i] = inBracketsPrase[i].Substring(1, inBracketsPrase[i].Length - 2);
-                Console.WriteLine("    {" + inBracketsPrase[i] + "}");
+                //Console.WriteLine("    {" + inBracketsPrase[i] + "}");
             }
 
             innerParse = inBracketsPrase;
@@ -150,7 +150,7 @@ namespace CompileNew
             return noBracketsParse;
         }
 
-        public static string ParseMono(string S, out List<string> monoInner, List<string> innerDogs)
+        public static string ParseMono(string S, out List<string> monoInner, ref List<string> innerDogs)
         {
 
             //" * @ + &@ - !8 + 7++"
@@ -180,13 +180,15 @@ namespace CompileNew
                     // to prevent + in case of ++ real
                     if (operatorIndex >= 0 && prevLastValuePuted == "")
                     {
+                        //string checkForExtra = oper + S[nowIn + 1];
+                        //int index = OPERATORS.names.IndexOf(checkForExtra);
                         nextOprIsPrev = 1;
                         monoInner.Add(oper);
                         res += "#";
                     }
                     else
                     {
-                        res += currentMayBeOperator;
+                        res += currentMayBeOperator.Remove(currentMayBeOperator.Length - 1);
                     }
                 }
                 wasPrev = currentPrevOperatorIndex;
@@ -219,7 +221,11 @@ namespace CompileNew
                         {
                             monoInner[monoInner.Count - 1] += S[nowIn];
                             if (S[nowIn] != ' ')
+                            {
                                 nextOprIsPrev = 2;
+                                ///!!!
+                                //lastValuePuted = lastValuePuted.Substring(0, lastValuePuted.Length - 1);
+                            }
                         }
                     }
                 }
@@ -240,8 +246,8 @@ namespace CompileNew
             if (currentPostOperatorIndex >= 0)
             {
                 string oper = currentMayBeOperator.Substring(0, currentMayBeOperator.Length);//OPERATORS.monoPreNames[wasPrev];
-                int operatorIndex = OPERATORS.monoPostNames.IndexOf(oper); 
-                    if (operatorIndex >= 0 && prevLastValuePuted != "")
+                int operatorIndex = OPERATORS.monoPostNames.IndexOf(oper);
+                if (operatorIndex >= 0 && prevLastValuePuted != "")
                 {
                     monoInner.Add(prevLastValuePuted + oper);
                     res = res.TrimEnd(' ');
@@ -250,13 +256,48 @@ namespace CompileNew
                     res = res.Substring(0, res.Length - prevLastValuePuted.Length).TrimEnd(' ') + "#";
                 }
             }
-            return res + lastValuePuted;
+            res = res + lastValuePuted; int dogIndex = 0;
+            //  1 + #* # + 15 + @ -@
+            //  !@
+            //  
+            for (int i = 0; i < monoInner.Count; i++)
+                monoInner[i] = monoInner[i].Trim(' ');
+            int currentDogInd = 0;
+            for (int i = 0; i < res.Length; i++)
+            {
+                if (res[i] == '@')
+                    currentDogInd++;
+                // false # like # && == meaned a incorrect struct
+                if (dogIndex < monoInner.Count && res[i] == '#')
+                {
+                    if (OPERATORS.names.IndexOf(monoInner[dogIndex]) >= 0)
+                    {
+                        res = res.Substring(0, i) + monoInner[dogIndex] + res.Substring(i + 1);
+                        monoInner.RemoveAt(dogIndex);
+                    }
+                    else
+                    {
+                        //Console.WriteLine(monoInner[dogIndex]);
+                        if (monoInner[dogIndex].IndexOf("@") >= 0)
+                            while (monoInner[dogIndex].IndexOf("@") >= 0)
+                            {
+                                monoInner[dogIndex] = monoInner[dogIndex].Substring(0, monoInner[dogIndex].IndexOf("@")) 
+                                    + "(" + innerDogs[currentDogInd] + ")"
+                                    + monoInner[dogIndex].Substring(monoInner[dogIndex].IndexOf("@") + 1);
+                                innerDogs.RemoveAt(currentDogInd);
+                                //currentDogInd++;
+                            }
+                        dogIndex++;
+                    }
+                }
+            }
+            return res;
         }
 
     }
 
-        //public static string ParseMonoOps(string S, out List<string> innerParse)
-        //{
-        //    // **++@ + 1233 - *@--
-        //}
+    //public static string ParseMonoOps(string S, out List<string> innerParse)
+    //{
+    //    // **++@ + 1233 - *@--
+    //}
 }

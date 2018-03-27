@@ -44,19 +44,10 @@ namespace CompileNew
         {
             if (S.Length == 0)
                 return new monoOperation();
-            //List<string> inner;
-            //string zero = PARSE.ParseLevels(S, out inner).Trim(' ');
-            //while (zero == "@")
-            //    zero = PARSE.ParseLevels(inner[0], out inner).Trim(' ');
-            //// lets find any non mono operations
 
-            ////
-            //// check for any prefix uno operations
-            //int indPre = FoundPreMonoOpIndexInFormat(zero),
-            //    indPost = FoundPostMonoOpIndexInFormat(zero);
             return new Value(S);
         }
-        
+
 
         static int FoundPreMonoOpIndexInFormat(string Format)
         {
@@ -100,61 +91,54 @@ namespace CompileNew
 
         public static operation Parse(string S)
         {
-            if (S == "")
-                return monoOperation.Parse(S);
-            Console.WriteLine(S + "\n");
+            Console.WriteLine("Trying to parse: \"" + S + "\"\n");
             List<string> inner, innerMono;
-            
+
             string zero = PARSE.ParseLevels(S, out inner);
-            COMMON.TraceOnDep(zero, 1, ConsoleColor.Yellow);
-            zero = PARSE.ParseMono(zero, out innerMono, inner);
+            zero = PARSE.ParseMono(zero, out innerMono, ref inner);
             COMMON.TraceOnDep(zero, 1, ConsoleColor.Red);
+
+
+
+            List<string> formatInner = new List<string>();
+            string Format = OPERATORS.MakeASync(zero, out formatInner);
+
+            int currentInnerIndex = 0, currentMonoIndex = 0;
+            List<operation> innerOperations = new List<operation>(), allOperations = new List<operation>();
+
             Console.WriteLine("Mono:");
             for (int i = 0; i < innerMono.Count; i++)
+            {
                 COMMON.TraceOnDep("# " + innerMono[i], 3, ConsoleColor.Red);
+                innerOperations.Add(Parse(innerMono[i]));
+            }
             Console.WriteLine("Inner:");
             for (int i = 0; i < inner.Count; i++)
+            {
                 COMMON.TraceOnDep("@ " + inner[i], 3, ConsoleColor.Red);
+                innerOperations.Add(Parse(inner[i]));
+            }
+            ///!!!
+            //
+            if (zero != "#" && zero != "@")
+                if (!anyOperatorsInFormat(Format))
+                    return monoOperation.Parse(zero);
 
-            //int X = 10;
-            //int currentInnerIndex = 0;
-            //List<operation> innerOperations = new List<operation>(), allOperations = new List<operation>();
-
-            //for (int i = 0; i < inner.Count; i++)
-            //{
-            //    if (inner.Count == 1 && S == inner[0] && S.Length >= 2 && S[0] == S[S.Length - 1] && OPERATORS.bracketOpen.IndexOf(S[0]) >= 3)
-            //        return monoOperation.Parse(S);
-            //    innerOperations.Add(Parse(inner[i]));
-            //}
-
-            //string Format = OPERATORS.MakeASync(zero, out inner);
-
-            //COMMON.TraceOnDep(zero, 5, ConsoleColor.Cyan); COMMON.TraceOnDep(Format, 5, ConsoleColor.DarkCyan);
-
-            //if (!anyOperatorsInFormat(Format))
-            //    return monoOperation.Parse(zero);
-
-            //List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
-            //for (int i = 0; i < parts.Count; i++)
-            //{
-            //    // trimming problems
-            //    parts[i] = parts[i].Trim(' ');
-            //    if (parts[i] != "@")
-            //        allOperations.Add(monoOperation.Parse(parts[i]));
-            //    else
-            //        allOperations.Add(innerOperations[currentInnerIndex++]);
-            //}
-
-            //binaryOperation resOp = new binaryOperation(Format, allOperations);
-
-            //// case of monooperation checking of NONE
-            //if ((resOp.a as monoOperation) != null && (resOp.a as monoOperation).isEmpty)
-            //    return new monoOperation(true, resOp.b, resOp.opName);
-            //if ((resOp.b as monoOperation) != null && (resOp.b as monoOperation).isEmpty)
-            //    return new monoOperation(true, resOp.a, resOp.opName);
-            ////
-            //return resOp;
-            return null;
+            List<string> parts = zero.Split(OPERATORS.names.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
+            for (int i = 0; i < parts.Count; i++)
+            {
+                // trimming problems
+                parts[i] = parts[i].Trim(' ');
+                if (parts[i] != "@" && parts[i] != "#")
+                    allOperations.Add(monoOperation.Parse(parts[i]));
+                else
+                    allOperations.Add(innerOperations[currentInnerIndex++]);
+            }
+            if (allOperations.Count > 1)
+                return new binaryOperation(Format, allOperations);
+            else
+                ///@!!!!!!!!!!!!
+                return allOperations[0];
         }
 
         static bool anyOperatorsInFormat(string S)
@@ -169,7 +153,7 @@ namespace CompileNew
 
         binaryOperation(string S, List<operation> args)
         {
-            args.Add(new monoOperation());
+            //args.Add(new monoOperation());
             for (int i = 0; i < OPERATORS.names.Count; i++)
             {
                 string[] splited = PARSE.SeparateFormatOnOperator(S, i);
@@ -193,7 +177,8 @@ namespace CompileNew
                     return;
                 }
             }
-            
+            throw new Exception("Invalid format of binary operation: \"" + S + "\"");
+
         }
     }
 }

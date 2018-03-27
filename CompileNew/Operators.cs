@@ -13,7 +13,7 @@ namespace CompileNew
         public static List<string> monoPostNames = new List<string>() {"++", "--" };
         public static List<char> bracketOpen = new List<char>() { '(', '{', '[', '\'', '\"' };
         public static List<char> bracketClose = new List<char>() { ')', '}', ']', '\'', '\"' };
-        public static string nonConfirmedSymbols = "+-*/%^|&!@ ";
+        public static string nonConfirmedSymbols = "+-*/%^><=|&!@ ()[]'{}\"";
 
         public static Stack<char> bracketStack = new Stack<char>();
 
