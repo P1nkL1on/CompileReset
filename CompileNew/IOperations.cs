@@ -25,8 +25,13 @@ namespace CompileNew
     public class monoOperation : operation
     {
         public bool isEmpty;
+        public bool isPrefix;
         protected operation a;
-        public override void Trace(int depth) { COMMON.TraceOnDep(opName, depth, ConsoleColor.Green); if (!isEmpty) a.Trace(depth + 1); }
+        public override void Trace(int depth)
+        {
+            COMMON.TraceOnDep((isPrefix)? opName+"_" : "_"+opName, depth, ConsoleColor.Green);
+            if (!isEmpty) a.Trace(depth + 1);
+        }
 
         public monoOperation()
         {
@@ -44,10 +49,55 @@ namespace CompileNew
         {
             if (S.Length == 0)
                 return new monoOperation();
-
-            return new Value(S);
+            List<string> inner;
+            string zero = PARSE.ParseLevels(S, out inner);
+            int preOp = FoundPreMonoOpIndexInFormat(zero),
+                postOp = FoundPostMonoOpIndexInFormat(zero),
+                nonZeroStartIndex = 0;
+            while (S[nonZeroStartIndex] == ' ')
+                nonZeroStartIndex++;
+            // check for first non ' ' symbol
+            if ((preOp < 0 && postOp < 0))
+                return new Value(S);
+            if (inner.Count == 0 || inner.Count > 1)
+            {
+                int opPlace = -1;
+                if (postOp >= 0 && zero.LastIndexOf(OPERATORS.monoPostNames[postOp]) > nonZeroStartIndex)                // prefix operation
+                {
+                    opPlace = zero.IndexOf(OPERATORS.monoPostNames[postOp]);
+                    inner.Add(zero.Remove(opPlace));
+                }
+                else               // postfix operation
+                {
+                    opPlace = zero.IndexOf(OPERATORS.monoPreNames[preOp]);
+                    inner.Add(zero.Substring(opPlace + OPERATORS.monoPreNames[preOp].Length) );
+                }
+            }
+            if (inner.Count > 1)
+            {
+                //throw new Exception("Strange unar operation! \"" + S + "\"");
+                string res = inner[inner.Count - 1], inner0 = "";
+                for (int i = 0, curInd = 0; i < res.Length; i++)
+                    if (res[i] == '@')
+                        inner0 += inner[curInd++];
+                    else
+                        inner0 += res[i];
+                inner = new List<string>();
+                inner.Add(inner0);
+            }
+            operation inOp = binaryOperation.Parse(inner[0]);
+            if (postOp >= 0 && zero.LastIndexOf(OPERATORS.monoPostNames[postOp]) > nonZeroStartIndex)
+                return new monoOperation(false, postOp, inOp);
+            if (preOp >= 0)
+                return new monoOperation(true, preOp, inOp);
+            throw new Exception("Can not parse a operation \"" + S + "\" with format mask \"" + zero + "\"");
         }
-
+        public monoOperation(bool prefix, int operatorIndex, operation inner)
+        {
+            isPrefix = prefix;
+            a = inner;
+            opName = (prefix) ? OPERATORS.monoPreNames[operatorIndex] : OPERATORS.monoPostNames[operatorIndex];
+        }
 
         static int FoundPreMonoOpIndexInFormat(string Format)
         {
@@ -60,11 +110,16 @@ namespace CompileNew
         }
         static int FoundPostMonoOpIndexInFormat(string Format)
         {
+            
             int maxLength = 0, foundIndex = -1;
             for (int i = 0; i < OPERATORS.monoPostNames.Count; i++)
-                if (Format.IndexOf(OPERATORS.monoPostNames[i]) == Format.Length - OPERATORS.monoPostNames[i].Length)
+            {
+                if (Format.IndexOf(OPERATORS.monoPostNames[i]) >= 0)
+                    return i;
+                if (Format.IndexOf(OPERATORS.monoPostNames[i]) >= 0 && Format.IndexOf(OPERATORS.monoPostNames[i]) == Format.Length - OPERATORS.monoPostNames[i].Length)
                     if (maxLength < OPERATORS.monoPostNames[i].Length)
                     { foundIndex = i; maxLength = OPERATORS.monoPostNames[foundIndex].Length; }
+            }
             return foundIndex;
         }
     }
@@ -98,7 +153,8 @@ namespace CompileNew
             zero = PARSE.ParseMono(zero, out innerMono, ref inner);
             COMMON.TraceOnDep(zero, 1, ConsoleColor.Red);
 
-
+            if (zero.Trim(' ') == "@")
+                return monoOperation.Parse(inner[0]);
 
             List<string> formatInner = new List<string>();
             string Format = OPERATORS.MakeASync(zero, out formatInner);
@@ -110,7 +166,7 @@ namespace CompileNew
             for (int i = 0; i < innerMono.Count; i++)
             {
                 COMMON.TraceOnDep("# " + innerMono[i], 3, ConsoleColor.Red);
-                innerOperations.Add(Parse(innerMono[i]));
+                innerOperations.Add(monoOperation.Parse(innerMono[i]));
             }
             Console.WriteLine("Inner:");
             for (int i = 0; i < inner.Count; i++)

@@ -251,9 +251,9 @@ namespace CompileNew
                 {
                     monoInner.Add(prevLastValuePuted + oper);
                     res = res.TrimEnd(' ');
-                    res = res.Substring(0, res.Length - oper.Length).TrimEnd(' ');
+                    res = res.Substring(0, Math.Max(0,res.Length - oper.Length)).TrimEnd(' ');
                     // res = res
-                    res = res.Substring(0, res.Length - prevLastValuePuted.Length).TrimEnd(' ') + "#";
+                    res = res.Substring(0, Math.Max(0, res.Length - prevLastValuePuted.Length)).TrimEnd(' ') + "#";
                 }
             }
             res = res + lastValuePuted; int dogIndex = 0;
@@ -281,8 +281,11 @@ namespace CompileNew
                         if (monoInner[dogIndex].IndexOf("@") >= 0)
                             while (monoInner[dogIndex].IndexOf("@") >= 0)
                             {
+                                string inD = innerDogs[currentDogInd];
+                                if (inD.IndexOf('\'') != 0 && inD.IndexOf('"') != 0)
+                                    inD = "(" + inD +")";
                                 monoInner[dogIndex] = monoInner[dogIndex].Substring(0, monoInner[dogIndex].IndexOf("@")) 
-                                    + "(" + innerDogs[currentDogInd] + ")"
+                                    + inD
                                     + monoInner[dogIndex].Substring(monoInner[dogIndex].IndexOf("@") + 1);
                                 innerDogs.RemoveAt(currentDogInd);
                                 //currentDogInd++;
