@@ -25,5 +25,10 @@ namespace CompileNew
             Console.WriteLine((TypeDep(tabs) + S).PadRight(Console.BufferWidth - 2, ' '));
             Console.ForegroundColor = ConsoleColor.Gray;
         }
+        public static void WriteColor(string S, ConsoleColor clr)
+        {
+            Console.ForegroundColor = clr;
+            Console.Write(S);
+        }
     }
 }

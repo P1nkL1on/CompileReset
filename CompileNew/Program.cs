@@ -22,6 +22,8 @@ namespace CompileNew
                     operation bo = binaryOperation.Parse(Console.ReadLine());//(" *(2 + 7)+ 10 & 1237680 + &(3) + 6*6 - !823187 + 7++  ");//(" 2 +  \"     a     d   3 4   \"  +  \"   ___ ...____ ..\" -\'a\'  *   \'b\' + 10 -(2 -    11+2+3+4)");
                     Console.BackgroundColor = ConsoleColor.White;
                     bo.Trace(1);
+                    Console.WriteLine();
+                    bo.TraceCode();
                 }
                 catch (Exception e)
                 {

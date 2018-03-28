@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace CompileNew
 {
-    public static class TYPES{
-        static List<string> names = new List<string>() { "void", "int", "char", "float", "double", "bool" };
-        public static string nameOfIndex (int typeIndex) { return names[typeIndex]; }
+    public static class TYPES
+    {
+        public static List<string> names = new List<string>() { "void", "int", "char", "float", "double", "bool" };
+        static List<string> variableType = new List<string>() { "local", "global", "param" };
+        public static string nameOfIndex(int typeIndex) { return names[typeIndex]; }
     }
-
-
     public struct TypeFull
     {
         int type; // int float char
         int pointerLevel;   // *int, ***char, *double
-        public TypeFull (int type, int pointerLevel)
+        public TypeFull(int type, int pointerLevel)
         {
             if (pointerLevel < 0)
                 throw new Exception("POINTER should be 0 or more");
@@ -46,7 +46,6 @@ namespace CompileNew
     {
         public Object date;
         TypeFull type;
-
         public Value(Object date, TypeFull type)
         {
             this.date = date;
@@ -59,7 +58,7 @@ namespace CompileNew
                 if (S.IndexOf('\'') == 0 && S.LastIndexOf('\'') == S.Length - 1)
                 {
                     string inBrackets = S.Substring(1, S.Length - 2);
-                    
+
                     if (inBrackets.Length == 1)
                         this.date = (object)((int)(inBrackets[0]));
                     else
@@ -101,8 +100,32 @@ namespace CompileNew
             }
             catch (Exception e)
             {
-                throw new Exception("Can not resolve value \"" + S +"\"");
+                throw new Exception("Can not resolve value \"" + S + "\"");
             }
+        }
+        public override void TraceCode()
+        {
+            ConsoleColor clr = ConsoleColor.Red;
+            switch (type.getType())
+            {
+                case 1:
+                case 5:
+                    clr = ConsoleColor.Magenta;
+                    break;
+                case 2:
+                    clr = ConsoleColor.DarkMagenta;
+                    break;
+                case 3:
+                case 4:
+                    clr = ConsoleColor.DarkYellow;
+                    break;
+                default:
+                    break;
+            }
+            if (type.getType() == 2)
+                COMMON.WriteColor("'" + (char)((int)date) + "'", clr);
+            else
+                COMMON.WriteColor(date.ToString(), clr);
         }
         public override void Trace(int depth)
         {
@@ -119,6 +142,7 @@ namespace CompileNew
         {
             return true;
         }
+
     }
-    
+
 }
