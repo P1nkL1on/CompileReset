@@ -294,6 +294,8 @@ namespace CompileNew
                     }
                 }
             }
+            ///!!!!!!!!
+            res = res.Trim();
             return res;
         }
 

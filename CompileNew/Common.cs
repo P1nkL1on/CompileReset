@@ -9,9 +9,10 @@ namespace CompileNew
     public class COMMON
 
     {
-        public static void TypeDep(int tabs)
+        public static string TypeDep(int tabs)
         {
-            while (--tabs >= 0) Console.Write( "  ");
+            //while (--tabs >= 0) Console.Write( "  ");
+            return "".PadLeft(tabs * 2, ' ');
         }
         public static void TraceOnDep (string S, int tabs)
         {
@@ -19,10 +20,10 @@ namespace CompileNew
         }
         public static void TraceOnDep(string S, int tabs, ConsoleColor clr)
         {
-            TypeDep(tabs);
+            
             Console.ForegroundColor = clr;
-            Console.WriteLine(S);
-            Console.ResetColor();
+            Console.WriteLine((TypeDep(tabs) + S).PadRight(Console.BufferWidth - 2, ' '));
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }

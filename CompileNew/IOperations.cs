@@ -29,7 +29,7 @@ namespace CompileNew
         protected operation a;
         public override void Trace(int depth)
         {
-            COMMON.TraceOnDep((isPrefix)? opName+"_" : "_"+opName, depth, ConsoleColor.Green);
+            COMMON.TraceOnDep((isPrefix)? opName+"_" : "_"+opName, depth, ConsoleColor.DarkGreen);
             if (!isEmpty) a.Trace(depth + 1);
         }
 
@@ -47,6 +47,7 @@ namespace CompileNew
 
         public static operation Parse(string S)
         {
+            S = S.Trim();
             if (S.Length == 0)
                 return new monoOperation();
             List<string> inner;
@@ -130,7 +131,7 @@ namespace CompileNew
 
         public override void Trace(int depth)
         {
-            COMMON.TraceOnDep(opName, depth);
+            COMMON.TraceOnDep(opName, depth, ConsoleColor.DarkGray);
             a.Trace(depth + 1);
             b.Trace(depth + 1);
         }
@@ -155,6 +156,8 @@ namespace CompileNew
 
             if (zero.Trim(' ') == "@")
                 return monoOperation.Parse(inner[0]);
+            if (zero.Trim(' ') == "#")
+                return monoOperation.Parse(innerMono[0]);
 
             List<string> formatInner = new List<string>();
             string Format = OPERATORS.MakeASync(zero, out formatInner);
@@ -204,8 +207,6 @@ namespace CompileNew
                     return true;
             return false;
         }
-
-
 
         binaryOperation(string S, List<operation> args)
         {

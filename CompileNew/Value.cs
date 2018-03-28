@@ -106,7 +106,7 @@ namespace CompileNew
         }
         public override void Trace(int depth)
         {
-            COMMON.TraceOnDep(this.ToString(), depth, ConsoleColor.Yellow);
+            COMMON.TraceOnDep(this.ToString(), depth, ConsoleColor.Magenta);
         }
         public override string ToString()
         {
