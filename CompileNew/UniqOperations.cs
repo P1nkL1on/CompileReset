@@ -19,8 +19,14 @@ namespace CompileNew
                     defineS = defineS.Substring( TYPES.names[i].Length );
                     while (defineS.Length > 0 && defineS[0] == '*')
                     { pointerCount++; defineS = defineS.Substring(1); }
-                    defineS = defineS.Trim(' ');
-                    int X = 10;
+                    if (defineS.Length > 1 && defineS[0] == ' ')
+                    {
+                        defineS = defineS.Trim(' ');
+                        if (defineS.Length > 0) // any of name detected (not allow "" variables with zero name)
+                        {
+
+                        }
+                    }
                 }
             return null;
         }

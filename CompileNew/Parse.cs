@@ -114,10 +114,13 @@ namespace CompileNew
                         currentInnerParse = "";
                     }
                     // add to a main zero level parsing
-                    char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@');
+                    char addC = ((OPERATORS.bracketClose.IndexOf(S[nowIn]) < 0) ? S[nowIn] : '@'),
+                         addCPrev= (nowIn > 0)? ((OPERATORS.bracketClose.IndexOf(S[nowIn-1]) < 0) ? S[nowIn-1] : '@'): ' ',
+                         addCNext = (nowIn < S.Length - 1) ? ((OPERATORS.bracketClose.IndexOf(S[nowIn + 1]) < 0) ? S[nowIn + 1] : '@') : ' ';
                     //if (addC != ' ')
                     noBracketsParse += addC;
-                    if (addC == '*')
+                    //!!!!!!!!!!!!!!!!!!1
+                    if (addC == '*' && addCPrev != '*'/* && addCNext != '*'*/)
                         noBracketsParse += ' ';
                 }
                 else
